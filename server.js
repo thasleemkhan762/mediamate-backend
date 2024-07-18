@@ -1,22 +1,37 @@
 const express = require("express");
-const connectDb = require("./config/mongoDbConnection");
 const dotenv = require("dotenv").config();
-const bodyparser = require("body-parser");
-const cors = require("cors");
 const errorHandler = require("./middleware/errorHandler");
-const jwt = require("jsonwebtoken")
-const cookieParser = require("cookie-parser")
+const connectDb = require("./config/mongoDbConnection");
+const path = require("path");
+const cors = require("cors");
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
+
 
 connectDb();
 const app = express();
-app.use(cors());
-
 const port = process.env.PORT || 5000;
 
-app.use(bodyparser.json());
+app.use(session({
+    secret: '123456789',
+    resave: false,
+    saveUninitialized: true,
+    // cookie: { secure: false }  
+    cookie: {
+        maxAge: 7 * 60 * 60 * 1000,
+        // secure: true, // Ensures cookies are only sent over HTTPS
+        httpOnly: true, // Prevents client-side access to cookies
+        sameSite: 'strict' // Protects against CSRF attacks by only allowing cookies from the same origin
+    },
+}));
+
+app.use(cors({origin: "http://localhost:3000", credentials: true}));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cookieParser());
 
 //importing routes
-const authRoute = require("./routes/authRoutes");
+const authRoute = require("./routes/userRoutes");
 
 //route setup
 app.use("/api/users",authRoute);

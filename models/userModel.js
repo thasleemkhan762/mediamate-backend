@@ -14,6 +14,14 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, "Please add the user password"],
     },
+    otp: {
+        type: String,
+        required: false
+    },
+    otpExpiration: {
+        type: Date,
+        required: false
+    }
  
 }, {
     timestamps: true,
