@@ -11,18 +11,19 @@ function generateOTP() {
   return { otp, otpExpiration };
 }
 
-// Temporary storage for OTP and user data
-// const otpStorage = {};
+
 
 // @desc    Register new user
 // @route   POST /api/users/register
 
 const userRegister = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
+
   if (!username || !email || !password) {
     res.status(400);
     throw new Error("All fields are mandatory!");
   }
+
   // Checking for already existing user in database
   const userAvailable = await User.findOne({ email });
   if (userAvailable) {
@@ -33,17 +34,12 @@ const userRegister = asyncHandler(async (req, res) => {
     // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    
+
     // otp generation
     const { otp, otpExpiration } = generateOTP();
+    const user = await User.create({ username, email, password: hashedPassword, otp });
 
-    req.session.signupData = {
-      username,
-      email,
-      password: hashedPassword,
-      generatedOTP: otp,
-      otpExpiration,
-    };
-    console.log("session data",req.session.signupData);
 
     //saving otp,session
     //   req.session.signupData = {
@@ -55,7 +51,13 @@ const userRegister = asyncHandler(async (req, res) => {
     //   };
 
     // otp to user
-    sendOTP(email, otp);
+    sendOTP(user.email, otp);
+
+    req.session.otp = otp;
+
+    console.log("req.session.otp line 67",req.session.otp);
+    console.log("user.email line 68",user.email);
+    console.log("date now",Date.now());
 
     // return res.redirect("/otp_verify");
     return res.status(200).json(otp);
@@ -75,41 +77,47 @@ const userRegister = asyncHandler(async (req, res) => {
     // res.json({ message: "Register the user" });
   }
 });
-
 // otp_verify
 const verifyOTP = asyncHandler(async (req, res) => {
-  const { otp } = req.body;
-  console.log(`Verifying  OTP: ${otp}`);
+
+  console.log("req body",req.body);
+
+  const { email,otp } = req.body;
+  console.log(`Verifying  OTP: ${otp} and email${email}`);
+
+  // Find the user by email
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(400).json({ error: 'User not found' });
+  }
+
 
   try {
-    // Ensure session data exists
-  // if (!req.session.signupData) {
-  //   return res.status(400).json({message :"Session expired. Please restart the registration process."});
-  // }
-  console.log(req.session.signupData);
-  const { username, email, password, generatedOTP, otpExpiration } =
-  req.session.signupData;
 
-    if (Date.now() > otpExpiration) {
-      delete req.session.signupData;
+  // Validate OTP
+  const verifyOtp = await User.findOne({ otp });
+  console.log("111",verifyOtp);
+  if (verifyOtp.otp !== otp) {
+    console.log("109",verifyOtp.otp);
+    return res.status(400).json({ error: 'Invalid OTP usercontroller.113' });
+  }
+  // const { username, email, password, generatedOTP, otpExpiration } = signupData;
+
+    if ((Date.now() - verifyOtp.createdAt) > 120000) {
+      // delete req.session.otp;
+      console.log("otp expired 121",verifyOtp.createdAt);
+      console.log("otp expired 122",Date.now() );
       return res.status(400).json({message :"otp expired"});
     }
 
-    if (otp === generatedOTP) {
-      // User verified, now create the user in the database
-      const userdata = await User.create({
-        username,
-        email,
-        password,
-      });
+    if (otp === verifyOtp.otp) {
 
-      delete req.session.signupData;
 
-      console.log(userdata);
-      return res.status(201).json(userdata)
+      console.log("OTP verified successfully");
+      return res.status(200).json({ message: 'OTP verified successfully' });
     } else {
-      console.log("Invalid OTP");
-      return res.status(400).send("Invalid OTP");
+      console.log("Invalid OTP.135");
+      return res.status(400).send("Invalid OTP.136");
     }
   } catch (error) {
     console.error("Error during OTP verification:", error);
