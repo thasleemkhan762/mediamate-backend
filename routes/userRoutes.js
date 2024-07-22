@@ -3,7 +3,7 @@ const { userRegister, verifyOTP, loginUser, getUser } = require("../controllers/
 const router = express.Router();
 
 router.route("/register").post(userRegister);
-// router.route("/login").post(loginUser);
+router.route("/login").post(loginUser);
 // router.route("/").get(getUser);
 router.route("/otp_verify").post(verifyOTP);
 

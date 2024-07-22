@@ -53,7 +53,7 @@ const userRegister = asyncHandler(async (req, res) => {
     // otp to user
     sendOTP(user.email, otp);
 
-    req.session.otp = otp;
+    // req.session.otp = otp;
 
     console.log("req.session.otp line 67",req.session.otp);
     console.log("user.email line 68",user.email);
@@ -77,52 +77,101 @@ const userRegister = asyncHandler(async (req, res) => {
     // res.json({ message: "Register the user" });
   }
 });
+
+
 // otp_verify
 const verifyOTP = asyncHandler(async (req, res) => {
+  console.log("req body", req.body);
 
-  console.log("req body",req.body);
-
-  const { email,otp } = req.body;
+  const { email, otp } = req.body;
   console.log(`Verifying  OTP: ${otp} and email${email}`);
 
   // Find the user by email
   const user = await User.findOne({ email });
   if (!user) {
-    return res.status(400).json({ error: 'User not found' });
+    return res.status(400).json({ error: "User not found" });
   }
-
 
   try {
-
-  // Validate OTP
-  const verifyOtp = await User.findOne({ otp });
-  console.log("111",verifyOtp);
-  if (verifyOtp.otp !== otp) {
-    console.log("109",verifyOtp.otp);
-    return res.status(400).json({ error: 'Invalid OTP usercontroller.113' });
-  }
-  // const { username, email, password, generatedOTP, otpExpiration } = signupData;
-
-    if ((Date.now() - verifyOtp.createdAt) > 120000) {
-      // delete req.session.otp;
-      console.log("otp expired 121",verifyOtp.createdAt);
-      console.log("otp expired 122",Date.now() );
-      return res.status(400).json({message :"otp expired"});
+    // Validate OTP
+    const verifyOtp = await User.findOne({ otp });
+    console.log("111", verifyOtp);
+    if (verifyOtp.otp !== otp) {
+      console.log("109", verifyOtp.otp);
+      return res.status(400).json({ error: "Invalid OTP usercontroller.113" });
     }
 
+    // chec otp expired or not
+    if (Date.now() - verifyOtp.createdAt > 120000) {
+      // delete req.session.otp;
+      console.log("otp expired 121", verifyOtp.createdAt);
+      console.log("otp expired 122", Date.now());
+      return res.status(400).json({ message: "otp expired" });
+    }
+
+    // check otp with database
     if (otp === verifyOtp.otp) {
-
-
       console.log("OTP verified successfully");
-      return res.status(200).json({ message: 'OTP verified successfully' });
+      verifyOtp.otp = null;
+
+      // remove otp from database
+      await User.updateOne({ email }, { $unset: { otp: "" } });
+
+      console.log("otp after verify 118", verifyOtp.otp);
+      return res.status(200).json({ message: "OTP verified successfully" });
+
     } else {
+
       console.log("Invalid OTP.135");
       return res.status(400).send("Invalid OTP.136");
     }
   } catch (error) {
+
     console.error("Error during OTP verification:", error);
     res.status(500).send("Internal server error");
+
   }
 });
 
-module.exports = { userRegister, verifyOTP };
+
+
+
+// Login user
+const loginUser = asyncHandler(async (req, res) => {
+
+  const { email, password } = req.body;
+  // check for empty fields
+  if (!email || !password) {
+    return res.status(400).json({status: "error", error: 'Please provide email and password' });
+  }
+
+  // Validate user
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(401).json({status: "error", error: 'user not found'});
+  }
+
+  // validate role
+  if (user.role !== "user") {
+    return res.status(401).json({status: "error", error: 'unauthorized. user access required'});
+  }
+
+  // validate password
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return res.status(401).json({status: "error", error: 'Wrong password'});
+  }
+
+  // token generation
+  const Token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+  res.cookie('userToken', Token, {httpOnly: false, maxAge: 60 * 60 * 1000 , withCredentials: true});
+
+  res.status(200).json({status: "success", data: user, token: Token});
+
+})
+
+
+
+
+module.exports = { userRegister, verifyOTP, loginUser };
