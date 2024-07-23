@@ -32,9 +32,14 @@ app.use(cookieParser());
 
 //importing routes
 const authRoute = require("./routes/userRoutes");
+// const oAuthRouter = require("./oauth");
+// const requestRouter = require("./request");
 
 //route setup
 app.use("/api/users",authRoute);
+///////////////////////////////////////////
+// app.use('/oauth', oAuthRouter);
+// app.use('/request', requestRouter);
 
 // error handling middleware
 app.use(errorHandler);

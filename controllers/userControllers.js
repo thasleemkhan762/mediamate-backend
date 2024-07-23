@@ -4,6 +4,19 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { transporter, sendOTP } = require("../config/emailConfig");
 
+// const { OAuth2Client } = require('google-auth-library');
+// const fetch = require('node-fetch');
+// const fetch = await import('node-fetch'); 
+// const client = new OAuth2Client(process.env.CLIENT_ID);
+
+
+// async function getUserData(access_token) {
+//   const fetch = await import('node-fetch'); // Use dynamic import
+//   const response = await fetch.default(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`);
+//   const data = await response.json();
+//   console.log('data', data);
+// }
+
 function generateOTP() {
   const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6_digit_OTP
   const otpExpiration = Date.now() + 2 * 60 * 1000; // 2 minutes
@@ -169,9 +182,45 @@ const loginUser = asyncHandler(async (req, res) => {
 
   res.status(200).json({status: "success", data: user, token: Token});
 
-})
+});
 
 
 
+// const googleLogin = asyncHandler(async (req, res) => {
+//   const { token } = req.body;
 
-module.exports = { userRegister, verifyOTP, loginUser };
+//   const ticket = await client.verifyIdToken({
+//       idToken: token,
+//       audience: process.env.CLIENT_ID,
+//   });
+//   const payload = ticket.getPayload();
+
+//   const user = await User.findOne({ email: payload.email });
+//   if (!user) {
+//       const newUser = new User({
+//           name: payload.name,
+//           email: payload.email,
+//           googleId: payload.sub,
+//       });
+//       await newUser.save();
+//   }
+
+//   const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+//   res.json({ token: jwtToken });
+// });
+
+
+// const googleAuth = asyncHandler(async (req, res) => {
+//   const { code } = req.body;
+//   const response = await fetch(`https://oauth2.googleapis.com/token`, {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+//       body: `code=${code}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&redirect_uri=${process.env.REDIRECT_URI}&grant_type=authorization_code`,
+//   });
+//   const data = await response.json();
+//   res.json(data);
+// });
+
+
+
+module.exports = { userRegister, verifyOTP, loginUser, googleLogin, googleAuth, getUserData };
