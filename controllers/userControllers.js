@@ -223,4 +223,4 @@ const loginUser = asyncHandler(async (req, res) => {
 
 
 
-module.exports = { userRegister, verifyOTP, loginUser, googleLogin, googleAuth, getUserData };
+module.exports = { userRegister, verifyOTP, loginUser, /*googleLogin, googleAuth, getUserData}*/};
