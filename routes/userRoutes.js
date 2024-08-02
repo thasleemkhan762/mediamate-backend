@@ -1,5 +1,5 @@
 const express = require("express");
-const { userRegister, verifyOTP, loginUser, getUserData, googleLogin, googleAuth } = require("../controllers/userControllers");
+const { userRegister, verifyOTP, loginUser, createPost, getUserData, googleLogin, googleAuth } = require("../controllers/userControllers");
 const router = express.Router();
 
 router.route("/register").post(userRegister);
@@ -11,5 +11,6 @@ router.route("/login").post(loginUser);
 
 // router.route("/").get(getUser);
 router.route("/otp_verify").post(verifyOTP);
+router.route("/").post(createPost);
 
 module.exports = router;

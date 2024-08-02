@@ -3,6 +3,9 @@ const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { transporter, sendOTP } = require("../config/emailConfig");
+const upload = require("../config/multer");
+const multer = require("multer");
+const path = require("path");
 
 // const { OAuth2Client } = require('google-auth-library');
 // const fetch = require('node-fetch');
@@ -223,4 +226,36 @@ const loginUser = asyncHandler(async (req, res) => {
 
 
 
-module.exports = { userRegister, verifyOTP, loginUser, /*googleLogin, googleAuth, getUserData}*/};
+
+// create new contact
+// api/contacts
+const createPost = asyncHandler(async (req, res) => {
+
+  upload(req, res, async function (err) {
+      if (err instanceof multer.MulterError) {
+
+          res.status(400).json({ message: "image upload error" });
+      } else if (err) {
+
+          res.status(500).json({ message: "Internal Server Error" });
+      } else {
+          console.log("The request body is :", req.body);
+          const { description } = req.body;
+          const image = req.file;
+
+          if (!description) {
+
+              res.status(400).json('All fields are mandatory!');
+          }
+          const post = await contactService.createContact({
+            description,
+            imagePath: image.path,
+          });
+
+          res.status(201).json(post);
+      }
+  })
+});
+
+
+module.exports = { userRegister, verifyOTP, loginUser, createPost /*googleLogin, googleAuth, getUserData}*/};
