@@ -241,14 +241,14 @@ const createPost = asyncHandler(async (req, res) => {
           res.status(500).json({ message: "Internal Server Error" });
       } else {
           console.log("The request body is :", req.body);
-          const { description, userId } = req.body;
+          const { description, email } = req.body;
           const image = req.file ? req.file.path : null;
 
-          if (!description) {
+          if ( !description || !email ) {
 
               res.status(400).json('All fields are mandatory!');
           }
-          const post = await Userservices.createPost( userId, image, description );
+          const post = await Userservices.createPost( email, image, description );
 
           res.status(201).json(post);
       }
