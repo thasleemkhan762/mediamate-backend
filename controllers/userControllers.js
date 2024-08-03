@@ -6,6 +6,7 @@ const { transporter, sendOTP } = require("../config/emailConfig");
 const upload = require("../config/multer");
 const multer = require("multer");
 const path = require("path");
+const Userservices = require("../services/userServices");
 
 // const { OAuth2Client } = require('google-auth-library');
 // const fetch = require('node-fetch');
@@ -241,16 +242,13 @@ const createPost = asyncHandler(async (req, res) => {
       } else {
           console.log("The request body is :", req.body);
           const { description } = req.body;
-          const image = req.file;
+          const image = req.file ? req.file.path : null;
 
           if (!description) {
 
               res.status(400).json('All fields are mandatory!');
           }
-          const post = await contactService.createContact({
-            description,
-            imagePath: image.path,
-          });
+          const post = await Userservices.createPost(description,image);
 
           res.status(201).json(post);
       }

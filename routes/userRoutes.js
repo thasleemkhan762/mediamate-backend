@@ -1,6 +1,14 @@
 const express = require("express");
-const { userRegister, verifyOTP, loginUser, createPost, getUserData, googleLogin, googleAuth } = require("../controllers/userControllers");
 const router = express.Router();
+const {
+  userRegister,
+  verifyOTP,
+  loginUser,
+  createPost,
+//   getUserData,
+//   googleLogin,
+//   googleAuth,
+} = require("../controllers/userControllers");
 
 router.route("/register").post(userRegister);
 router.route("/login").post(loginUser);
