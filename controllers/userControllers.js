@@ -248,7 +248,7 @@ const createPost = asyncHandler(async (req, res) => {
 
               res.status(400).json('All fields are mandatory!');
           }
-          const post = await Userservices.createPost(description,image);
+          const post = await Userservices.createPost( image, description );
 
           res.status(201).json(post);
       }
