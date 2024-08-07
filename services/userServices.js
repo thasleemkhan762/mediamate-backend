@@ -2,10 +2,10 @@ const Posts = require("../models/postModel");
 
 
 //create post
-const createPost = async( email, image, description ) => {
+const createPost = async( userId, email, image, description ) => {
     try {
 
-        const newPost = await Posts.create({ email, image, description });
+        const newPost = await Posts.create({ userId, email, image, description });
 
         return newPost;
 
