@@ -226,10 +226,25 @@ const loginUser = asyncHandler(async (req, res) => {
 // });
 
 
+//get all posts
+const getAllPosts = asyncHandler(async(req, res) => {
+  try {
+
+    const { posts } = await Userservices.getAllPosts();
+    res.status(200).json({ posts });
+
+  } catch (error) {
+
+    console.error(`Error in fetching posts: ${error.message}`);
+
+    res.status(500).json({ error: error.message });
+  }
+})
+
 
 
 // create new contact
-// api/contacts
+// api/users
 const createPost = asyncHandler(async (req, res) => {
 
   upload(req, res, async function (err) {
@@ -256,4 +271,4 @@ const createPost = asyncHandler(async (req, res) => {
 });
 
 
-module.exports = { userRegister, verifyOTP, loginUser, createPost /*googleLogin, googleAuth, getUserData}*/};
+module.exports = { userRegister, verifyOTP, loginUser, getAllPosts, createPost /*googleLogin, googleAuth, getUserData}*/};
