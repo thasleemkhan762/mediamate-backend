@@ -34,6 +34,8 @@ app.use("/uploads", express.static(path.resolve(__dirname, 'uploads')));
 //importing routes
 // const oAuthRouter = require("./oauth");
 // const requestRouter = require("./request");
+// Middleware to serve static files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const authRoute = require("./routes/userRoutes");
 
 //route setup
