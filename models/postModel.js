@@ -10,10 +10,6 @@ const postSchema = mongoose.Schema(
       type: String,
       required: [true, "Please add the user username"],
     },
-    email: {
-      type: String,
-      required: [true, "Please add the user email"],
-    },
     image: {
       type: String,
       required: [true, "please add the image"],
