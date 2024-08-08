@@ -14,10 +14,10 @@ const getAllPosts = async() => {
 }
 
 //create post
-const createPost = async( userId, email, image, description ) => {
+const createPost = async( userId, username, email, image, description ) => {
     try {
 
-        const newPost = await Posts.create({ userId, email, image, description });
+        const newPost = await Posts.create({ userId, username, email, image, description });
 
         return newPost;
 
