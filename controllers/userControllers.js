@@ -230,7 +230,7 @@ const loginUser = asyncHandler(async (req, res) => {
 const getAllPosts = asyncHandler(async(req, res) => {
   try {
 
-    const { posts } = await Userservices.getAllPosts();
+    const posts = await Userservices.getAllPosts();
     res.status(200).json({ posts });
 
   } catch (error) {

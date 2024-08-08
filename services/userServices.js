@@ -5,6 +5,8 @@ const Posts = require("../models/postModel");
 const getAllPosts = async() => {
     try {
         const posts = await Posts.find();
+        console.log(posts);
+        
         return posts;
     } catch (error) {
         throw error;

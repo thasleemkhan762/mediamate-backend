@@ -32,9 +32,9 @@ app.use(cookieParser());
 app.use("/uploads", express.static(path.resolve(__dirname, 'uploads')));
 
 //importing routes
-const authRoute = require("./routes/userRoutes");
 // const oAuthRouter = require("./oauth");
 // const requestRouter = require("./request");
+const authRoute = require("./routes/userRoutes");
 
 //route setup
 app.use("/api/users",authRoute);
