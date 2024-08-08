@@ -3,8 +3,11 @@ const Posts = require("../models/postModel");
 
 // get all posts
 const getAllPosts = async() => {
+    const aggregationPipeline = [
+        { $sort: { createdAt: -1 } },
+    ];
     try {
-        const posts = await Posts.find();
+        const posts = await Posts.aggregate(aggregationPipeline);
         console.log(posts);
         
         return posts;
