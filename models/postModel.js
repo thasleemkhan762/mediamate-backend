@@ -6,6 +6,10 @@ const postSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    username: {
+      type: String,
+      required: [true, "Please add the user username"],
+    },
     email: {
       type: String,
       required: [true, "Please add the user email"],
