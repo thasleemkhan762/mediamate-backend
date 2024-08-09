@@ -17,10 +17,10 @@ const getAllPosts = async() => {
 }
 
 //create post
-const createPost = async( userId, username, image, description ) => {
+const createPost = async( userId, username, file, fileType, description ) => {
     try {
 
-        const newPost = await Posts.create({ userId, username, image, description });
+        const newPost = await Posts.create({ userId, username, file, fileType, description });
 
         return newPost;
 
