@@ -246,27 +246,23 @@ const getAllPosts = asyncHandler(async(req, res) => {
 // create new contact
 // api/users
 const createPost = asyncHandler(async (req, res) => {
-
   upload(req, res, async function (err) {
-      if (err instanceof multer.MulterError) {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ message: "File upload error" });
+    } else if (err) {
+      return res.status(500).json({ message: "Internal Server Error" });
+    } else {
+      const { description, userId, username } = req.body;
+      const file = req.file ? req.file.path : null;
+      const fileType = req.file ? req.file.mimetype.startsWith('image/') ? 'image' : 'video' : null;
 
-          res.status(400).json({ message: "image upload error" });
-      } else if (err) {
-
-          res.status(500).json({ message: "Internal Server Error" });
-      } else {
-          console.log("The request body is :", req.body);
-          const { description, userId, username } = req.body;
-          const image = req.file ? req.file.path : null;
-
-          if ( !description || !userId || !username ) {
-
-              res.status(400).json('All fields are mandatory!');
-          }
-          const post = await Userservices.createPost( userId, username, /*email,*/ image, description );
-
-          res.status(201).json(post);
+      if (!description || !userId || !username || !file || !fileType) {
+        return res.status(400).json('All fields are mandatory!');
       }
+
+      const post = await Userservices.createPost(userId, username, file, fileType, description);
+      return res.status(201).json(post);
+    }
   })
 });
 
