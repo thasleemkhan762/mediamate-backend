@@ -10,9 +10,14 @@ const postSchema = mongoose.Schema(
       type: String,
       required: [true, "Please add the user username"],
     },
-    image: {
-      type: String,
-      required: [true, "please add the image"],
+    file: {
+      type: String, // Storing the file path as a string
+      required: true,
+    },
+    fileType: {
+      type: String, // Indicates whether the file is an image or a video
+      enum: ["image", "video"],
+      required: true,
     },
     description: {
       type: String,
