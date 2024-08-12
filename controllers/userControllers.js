@@ -225,6 +225,15 @@ const loginUser = asyncHandler(async (req, res) => {
 //   res.json(data);
 // });
 
+// get userdata
+const getUserData = asyncHandler(async (req, res) => {
+  const userData = await Userservices.getUserData(req.params.id);
+  if (!userData) {
+    return res.status(404).json({ status: "error", message: "User not found" });
+  }
+  res.status(200).json({ status: "success", data: userData });
+})
+
 
 //get all posts
 const getAllPosts = asyncHandler(async(req, res) => {
@@ -276,4 +285,4 @@ const createPost = asyncHandler(async (req, res) => {
 });
 
 
-module.exports = { userRegister, verifyOTP, loginUser, getAllPosts, createPost /*googleLogin, googleAuth, getUserData}*/};
+module.exports = { userRegister, verifyOTP, loginUser, getUserData, getAllPosts, createPost /*googleLogin, googleAuth, getUserData}*/};
