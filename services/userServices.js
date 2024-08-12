@@ -1,4 +1,5 @@
 const Posts = require("../models/postModel");
+const User = require("../models/userModel");
 
 
 // get all posts
@@ -31,5 +32,10 @@ const createPost = async( userId, username, file, fileType, description ) => {
     }
 };
 
+// get user data
+const getUserData = async (id) => {
 
-module.exports = { createPost, getAllPosts };
+    return await User.findById(id);
+}
+
+module.exports = { createPost, getAllPosts, getUserData };

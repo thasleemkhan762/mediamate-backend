@@ -3,8 +3,8 @@ const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { transporter, sendOTP } = require("../config/emailConfig");
-const upload = require("../config/multer");
 const multer = require("multer");
+const upload = require("../config/multer");
 const path = require("path");
 const Userservices = require("../services/userServices");
 
@@ -246,22 +246,31 @@ const getAllPosts = asyncHandler(async(req, res) => {
 // create new contact
 // api/users
 const createPost = asyncHandler(async (req, res) => {
+
   upload(req, res, async function (err) {
+
     if (err instanceof multer.MulterError) {
-      return res.status(400).json({ message: "File upload error" });
+
+      return res.status(400).json({ message: "File upload error", error: err.message });
     } else if (err) {
-      return res.status(500).json({ message: "Internal Server Error" });
+
+      return res.status(500).json({ message: "Internal Server Error", error: err.message });
     } else {
+
       const { description, userId, username } = req.body;
       const file = req.file ? req.file.path : null;
-      const fileType = req.file ? req.file.mimetype.startsWith('image/') ? 'image' : 'video' : null;
+      const fileType = req.file ? (req.file.mimetype.startsWith('image/') ? 'image' : 'video') : null;
 
       if (!description || !userId || !username || !file || !fileType) {
-        return res.status(400).json('All fields are mandatory!');
+        return res.status(400).json('All fields are mandatory!!!');
       }
 
-      const post = await Userservices.createPost(userId, username, file, fileType, description);
-      return res.status(201).json(post);
+      try {
+        const post = await Userservices.createPost(userId, username, file, fileType, description);
+        return res.status(201).json(post);
+      } catch (error) {
+        return res.status(500).json({ message: 'Failed to create post', error: error.message });
+      }
     }
   })
 });

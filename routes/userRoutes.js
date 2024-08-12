@@ -22,5 +22,6 @@ router.route("/login").post(loginUser);
 router.route("/otp_verify").post(verifyOTP);
 router.route("/").get(getAllPosts);
 router.route("/").post(createPost);
+router.route("/:id").put();
 
 module.exports = router;
