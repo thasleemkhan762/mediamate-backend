@@ -32,7 +32,6 @@ function generateOTP() {
 
 // @desc    Register new user
 // @route   POST /api/users/register
-
 const userRegister = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
@@ -152,7 +151,6 @@ const verifyOTP = asyncHandler(async (req, res) => {
 
 
 
-
 // Login user
 const loginUser = asyncHandler(async (req, res) => {
 
@@ -234,6 +232,42 @@ const getUserData = asyncHandler(async (req, res) => {
   res.status(200).json({ status: "success", data: userData });
 })
 
+//update user data
+const updateUser = asyncHandler(async (req, res) => {
+  upload(req, res, async (error) => {
+      if (error instanceof multer.MulterError) {
+
+          return res.status(400).json({ message: 'Image upload error' });
+      } else if (error) {
+
+          return res.status(500).json({ message: 'Internal server error' });
+      }
+
+      let imagePath;
+
+      if (req.file) {
+          imagePath = path.join('uploads/images', req.file.filename);
+      } else {
+          const user = await contactService.getContact(req.params.id);
+          if (!user) {
+
+              res.status(400);
+              throw new Error('Contact not found');
+          }
+          imagePath = user.image;
+      }
+
+      const updateData = {
+          ...req.body,
+          ...(imagePath ? { image: imagePath } : {}),
+      };
+
+      const updatedData = await contactService.updateContact(req.params.id, updateData, imagePath);
+
+      res.status(200).json(updatedData);
+  });
+});
+
 
 //get all posts
 const getAllPosts = asyncHandler(async(req, res) => {
@@ -285,4 +319,12 @@ const createPost = asyncHandler(async (req, res) => {
 });
 
 
-module.exports = { userRegister, verifyOTP, loginUser, getUserData, getAllPosts, createPost /*googleLogin, googleAuth, getUserData}*/};
+module.exports = {
+  userRegister,
+  verifyOTP,
+  loginUser,
+  getUserData,
+  getAllPosts,
+  createPost,
+  updateUser /*googleLogin, googleAuth, getUserData}*/,
+};
