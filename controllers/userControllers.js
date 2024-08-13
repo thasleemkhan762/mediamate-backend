@@ -248,7 +248,7 @@ const updateUser = asyncHandler(async (req, res) => {
       if (req.file) {
           imagePath = path.join('uploads/images', req.file.filename);
       } else {
-          const user = await contactService.getContact(req.params.id);
+          const user = await Userservices.updateUser(req.params.id);
           if (!user) {
 
               res.status(400);

@@ -33,6 +33,10 @@ const userSchema = mongoose.Schema(
       type: String,
       default: null,
     },
+    phone: {
+        type: String,
+        default: null,
+    },
     otp: {
       type: String,
       required: false,
