@@ -5,6 +5,7 @@ const {
   verifyOTP,
   loginUser,
   getUserData,
+  updateUser,
   createPost,
   getAllPosts
 //   getUserData,
@@ -24,5 +25,6 @@ router.route("/otp_verify").post(verifyOTP);
 router.route("/").get(getAllPosts);
 router.route("/").post(createPost);
 router.route("/:id").get(getUserData);
+router.route("/:id").put(updateUser);
 
 module.exports = router;
