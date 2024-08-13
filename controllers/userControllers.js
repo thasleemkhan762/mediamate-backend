@@ -262,7 +262,7 @@ const updateUser = asyncHandler(async (req, res) => {
           ...(imagePath ? { image: imagePath } : {}),
       };
 
-      const updatedData = await contactService.updateContact(req.params.id, updateData, imagePath);
+      const updatedData = await Userservices.updateUser(req.params.id, updateData, imagePath);
 
       res.status(200).json(updatedData);
   });
