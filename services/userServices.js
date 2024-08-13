@@ -40,6 +40,7 @@ const getUserData = async (id) => {
 
 // update user
 const updateUser = async (id, updateData, newImagePath) => {
+    
     const user = await User.findById(id);
 
     if (!user) {
@@ -62,6 +63,7 @@ const updateUser = async (id, updateData, newImagePath) => {
     // }
 
     const editedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
+
 
     return editedUser;
 };

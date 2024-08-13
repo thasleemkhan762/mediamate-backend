@@ -234,6 +234,8 @@ const getUserData = asyncHandler(async (req, res) => {
 
 //update user data
 const updateUser = asyncHandler(async (req, res) => {
+  console.log("req.body 237",req.body);
+
   upload(req, res, async (error) => {
       if (error instanceof multer.MulterError) {
 
@@ -248,7 +250,7 @@ const updateUser = asyncHandler(async (req, res) => {
       if (req.file) {
           imagePath = path.join('uploads/images', req.file.filename);
       } else {
-          const user = await Userservices.updateUser(req.params.id);
+          const user = await Userservices.getUserData(req.params.id);
           if (!user) {
 
               res.status(400);
@@ -261,6 +263,7 @@ const updateUser = asyncHandler(async (req, res) => {
           ...req.body,
           ...(imagePath ? { image: imagePath } : {}),
       };
+      
 
       const updatedData = await Userservices.updateUser(req.params.id, updateData, imagePath);
 
