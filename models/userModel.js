@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema(
   {
+    image: {
+      type: String,
+      default: null,
+    },
     username: {
       type: String,
       required: [true, "Please add the username"],
@@ -34,8 +38,8 @@ const userSchema = mongoose.Schema(
       default: null,
     },
     phone: {
-        type: String,
-        default: null,
+      type: String,
+      default: null,
     },
     otp: {
       type: String,

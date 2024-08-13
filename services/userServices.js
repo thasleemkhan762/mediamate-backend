@@ -9,7 +9,7 @@ const getAllPosts = async() => {
     ];
     try {
         const posts = await Posts.aggregate(aggregationPipeline);
-        console.log(posts);
+        // console.log(posts);
         
         return posts;
     } catch (error) {
@@ -57,9 +57,9 @@ const updateUser = async (id, updateData, newImagePath) => {
         }
         updateData.image = newImagePath;
     }
-    if (updateData.email) {
-        updateData.email = updateData.email.toLowerCase();
-    }
+    // if (updateData.email) {
+    //     updateData.email = updateData.email.toLowerCase();
+    // }
 
     const editedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
 
