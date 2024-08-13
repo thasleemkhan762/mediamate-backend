@@ -38,4 +38,32 @@ const getUserData = async (id) => {
     return await User.findById(id);
 }
 
-module.exports = { createPost, getAllPosts, getUserData };
+// update user
+const updateUser = async (id, updateData, newImagePath) => {
+    const user = await User.findById(id);
+
+    if (!user) {
+        console.log('user not found');
+
+        return null;
+    }
+    if (newImagePath && newImagePath !== user.image) {
+        if (user.image) {
+            try {
+                await fs.unlink(user.image);
+            } catch (error) {
+                console.error('Error detecting old image file:', error);
+            }
+        }
+        updateData.image = newImagePath;
+    }
+    if (updateData.email) {
+        updateData.email = updateData.email.toLowerCase();
+    }
+
+    const editedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
+
+    return editedUser;
+};
+
+module.exports = { createPost, getAllPosts, getUserData, updateUser };
