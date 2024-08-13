@@ -1,5 +1,6 @@
 const Posts = require("../models/postModel");
 const User = require("../models/userModel");
+const fs = require('fs').promises;
 
 
 // get all posts
