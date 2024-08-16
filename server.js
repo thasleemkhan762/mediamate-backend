@@ -7,9 +7,8 @@ const cors = require("cors");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const http = require('http');
-const { Server } = require("socket.io");
-
-
+const socketIo  = require("socket.io");
+const Chat = require("./models/chatModel")
 
 connectDb();
 const app = express();
@@ -43,14 +42,7 @@ app.use("/uploads", express.static(path.resolve(__dirname, 'uploads')));
 // Middleware to serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-//routes
-const authRoute = require("./routes/userRoutes");
-const chatRoute = require("./routes/chatRoutes")
 
-
-//route setup
-app.use("/api/users",authRoute);
-app.use("/api/users/chat",chatRoute);
 ///////////////////////////////////////////
 // app.use('/oauth', oAuthRouter);
 // app.use('/request', requestRouter);
@@ -62,23 +54,46 @@ app.use(errorHandler);
 // socket
 const server = http.createServer(app);
 
-const io = new Server(server, {
+const io = socketIo(server, {
     cors: {
       origin: "http://localhost:3000", // Replace with your React app's URL
       methods: ["GET", "POST"],
     },
 });
 
+//routes
+const authRoute = require("./routes/userRoutes");
+const chatRoute = require("./routes/chatRoutes");
+const chatModel = require("./models/chatModel");
+//route setup
+app.use("/api/users",authRoute);
+app.use("/api/users/chat",chatRoute);
+
+
+// Socket.io setup
 io.on('connection', (socket) => {
-console.log("a user connected");
+    console.log('A user connected');
 
-socket.on("chat message", (msg) => {
-    io.emit("chat message", msg);
-});
+    socket.on('joinChat', ({ chatId }) => {
+        socket.join(chatId);
+    });
 
-socket.on("disconnect", () => {
-    console.log("user disconnected");
-});
+    socket.on('sendMessage', async (messageData) => {
+        const { chatId, senderId, content } = messageData;
+        
+        // Save the message to the database
+        let chat = await Chat.findById(chatId);
+        const message = { sender: senderId, content, timestamp: new Date() };
+        chat.messages.push(message);
+        await chat.save();
+
+        // Emit the message to the chat room
+        io.to(chatId).emit('receiveMessage', message);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('User disconnected');
+    });
 });
 
 // start the server
