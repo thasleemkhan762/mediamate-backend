@@ -7,15 +7,14 @@ const Chat = require("../models/chatModel");
 const getUserChats = asyncHandler(async (req, res) => {
 
     try {
+        const chat = await Chat.findOne({ users: { $all: [req.user._id, req.params.userId] } })
+            .populate('messages.sender', 'name');
 
-        const chats = await Chat.find({ participants: req.params.userId }).populate('participants messages.sender');
-
-        res.status(200).res.json(chats);
+        res.status(200).json(chat);
 
     } catch (err) {
 
-        res.status(500).json({ error: 'Server error' });
-
+        res.status(500).json({ message: 'Server error' });
     }
 
 });
@@ -26,31 +25,19 @@ const sendMessage = asyncHandler(async (req, res) => {
     const { senderId, recipientId, content } = req.body;
 
     try {
-
-        let chat = await Chat.findOne({ participants: { $all: [senderId, recipientId] } });
-
+        let chat = await Chat.findOne({ users: { $all: [senderId, recipientId] } });
+        
         if (!chat) {
-
-            chat = new Chat({
-                
-              participants: [senderId, recipientId],
-              messages: [{ sender: senderId, content }],
-
-            });
-
-        } else {
-
-            chat.messages.push({ sender: senderId, content });
+            chat = new Chat({ users: [senderId, recipientId], messages: [] });
         }
 
+        const message = { sender: senderId, content, timestamp: new Date() };
+        chat.messages.push(message);
         await chat.save();
-        
-        res.json(chat);
 
+        res.status(200).json(chat);
     } catch (err) {
-
-        res.status(500).json({ error: 'Server error' });
-
+        res.status(500).json({ message: 'Server error' });
     }
 
 });
