@@ -42,11 +42,15 @@ app.use("/uploads", express.static(path.resolve(__dirname, 'uploads')));
 // const requestRouter = require("./request");
 // Middleware to serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+//routes
 const authRoute = require("./routes/userRoutes");
+const chatRoute = require("./routes/chatRoutes")
 
 
 //route setup
 app.use("/api/users",authRoute);
+app.use("/api/users/chat",chatRoute);
 ///////////////////////////////////////////
 // app.use('/oauth', oAuthRouter);
 // app.use('/request', requestRouter);
