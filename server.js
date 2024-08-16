@@ -7,9 +7,8 @@ const cors = require("cors");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const http = require('http');
-const { Server } = require('socket.io');
+const { Server } = require("socket.io");
 
-const server = http.createServer(app);
 
 
 connectDb();
@@ -44,7 +43,7 @@ app.use("/uploads", express.static(path.resolve(__dirname, 'uploads')));
 // Middleware to serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const authRoute = require("./routes/userRoutes");
-const { Server } = require("socket.io");
+
 
 //route setup
 app.use("/api/users",authRoute);
@@ -57,6 +56,8 @@ app.use(errorHandler);
 
 
 // socket
+const server = http.createServer(app);
+
 const io = new Server(server, {
     cors: {
       origin: "http://localhost:3000", // Replace with your React app's URL
@@ -77,6 +78,6 @@ socket.on("disconnect", () => {
 });
 
 // start the server
-app.listen(port, ()=> {
+server.listen(port, ()=> {
     console.log(`Server is running on port ${port}`);
 });
