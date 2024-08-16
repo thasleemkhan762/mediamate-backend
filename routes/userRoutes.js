@@ -5,7 +5,7 @@ const {
   verifyOTP,
   loginUser,
   getUserData,
-  getAllUser,
+  getAllUsers,
   updateUser,
   createPost,
   getAllPosts
@@ -22,7 +22,7 @@ router.route("/otp_verify").post(verifyOTP);
 // router.post("/googleAuth", googleAuth);
 // router.get('/getUserData', getUserData);
 
-router.route("/allUsers").get(getAllUser);
+router.route("/allUsers").get(getAllUsers);
 
 router.route("/").get(getAllPosts);
 router.route("/").post(createPost);

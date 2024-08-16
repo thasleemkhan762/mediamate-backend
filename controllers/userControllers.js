@@ -223,7 +223,7 @@ const loginUser = asyncHandler(async (req, res) => {
 //   res.json(data);
 // });
 
-const getAllUser = asyncHandler((async (req,res) => {
+const getAllUsers = asyncHandler((async (req,res) => {
   try {
     const users = await User.find().select('userId username');
     res.status(200).json(users);
@@ -336,7 +336,7 @@ module.exports = {
   verifyOTP,
   loginUser,
   getUserData,
-  getAllUser,
+  getAllUsers,
   getAllPosts,
   createPost,
   updateUser /*googleLogin, googleAuth, getUserData}*/,

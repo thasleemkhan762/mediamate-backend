@@ -10,7 +10,7 @@ const getUserChats = asyncHandler(async (req, res) => {
 
         const chats = await Chat.find({ participants: req.params.userId }).populate('participants messages.sender');
 
-        res.json(chats);
+        res.status(200).res.json(chats);
 
     } catch (err) {
 
