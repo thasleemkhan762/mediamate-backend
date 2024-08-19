@@ -78,17 +78,22 @@ io.on('connection', (socket) => {
     });
 
     socket.on('sendMessage', async (messageData) => {
-        const { chatId, senderId, content } = messageData;
-        
-        // Save the message to the database
-        const chat = await Chat.findById(chatId);
-        const message = { sender: senderId, content, timestamp: new Date() };
-        chat.messages.push(message);
-        await chat.save();
-
+        console.log("message datas", messageData);
+      
+        const { chatId, senderId, content, recipientId } = messageData;
+      
+        // Find the chat document and update it with the new message
+        const chat = await Chat.findOneAndUpdate(
+          { users: { $all: [recipientId, senderId] } },
+          { $push: { messages: { sender: senderId, content, timestamp: new Date() } } },
+          { upsert: true, new: true }
+        );
+      
+        console.log("chat collection", chat);
+      
         // Emit the message to the chat room
-        io.to(chatId).emit('receiveMessage', message);
-    });
+        io.to(chatId).emit('receiveMessage', { sender: senderId, content, timestamp: new Date() });
+      });
 
     socket.on('disconnect', () => {
         console.log('User disconnected');

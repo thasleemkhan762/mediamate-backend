@@ -8,53 +8,55 @@ const getUserChats = asyncHandler(async (req, res) => {
     const { id1, id2 } = req.params;
     console.log(id1);
     console.log(id2);
-
-    
-    
     try {
- 
+      // Find the chat with both users
+      const chat = await Chat.findOne({ users: { $all: [id1, id2] } });
+      // .populate('messages.sender', 'username');
+    //   console.log("Found chat:", chat);
+      // console.log(chat);
 
-        // Find the chat with both users
-        const chat = await Chat.findOne({ users: { $all: [ id1, id2] } })
-        // .populate('messages.sender', 'username');
-        console.log('Found chat:', chat);
-            // console.log(chat);
-            
+      // Check if chat exists
+      if (!chat) {
+        return res.status(404).json({ message: "Chat not found" });
+      }
 
-        // Check if chat exists
-        if (!chat) {
-            return res.status(404).json({ message: 'Chat not found' });
-        }
+      // Log the chat messages for debugging
+    //   console.log("chat messages", chat);
 
-        // Log the chat messages for debugging
-        console.log("chat messages", chat);
-
-        // Return the chat data
-        res.status(200).json(chat);
-
+      // Return the chat data
+      res.status(200).json(chat);
     } catch (err) {
-        // Log the error for debugging
-        console.error("Server Error:", err);
+      // Log the error for debugging
+      console.error("Server Error:", err);
 
-        // Return server error
-        res.status(500).json({ message: 'Server error' });
+      // Return server error
+      res.status(500).json({ message: "Server error" });
     }
 });
 
 
 // send new messages ( update chat or create new )
 const sendMessage = asyncHandler(async (req, res) => {
-    console.log(req.body);
+    console.log("controller send body",req.body);
     
 
+    
+    console.log("1");
     const { senderId, recipientId, content } = req.body;
-
+    console.log("2");
+    
     if (!senderId || !recipientId || !content) {
         return res.status(400).json({ message: 'Missing required fields' });
     }
-
+    console.log("3");
+    
     try {
-        let chat = await Chat.findOne({ users: { $all: [senderId, recipientId] } });
+        console.log("4");
+        const chat = await Chat.findOne({ users: { $all: [senderId, recipientId] } });
+        console.log("5");
+
+        console.log("chat is", chat);
+        
         
         if (!chat) {
             chat = new Chat({ users: [senderId, recipientId], messages: [] });
