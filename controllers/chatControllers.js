@@ -50,28 +50,24 @@ const sendMessage = asyncHandler(async (req, res) => {
     }
     console.log("3");
     
-    try {
-        console.log("4");
-        const chat = await Chat.findOne({ users: { $all: [senderId, recipientId] } });
-        console.log("5");
+     try {
+    console.log("4");
+    const { senderId, recipientId, content } = req.body;
+    const chatId = `${senderId}${recipientId}`; // generate a unique chat ID
 
-        console.log("chat is", chat);
-        
-        
-        if (!chat) {
-            chat = new Chat({ users: [senderId, recipientId], messages: [] });
-        }
+    // Emit the message to the chat room using Socket.IO
+    io.emit('sendMessage', {
+      chatId,
+      senderId,
+      content,
+      recipientId,
+    });
 
-
-        const message = { sender: senderId, content, timestamp: new Date() };
-        chat.messages.push(message);
-        await chat.save();
-
-        res.status(200).json(chat);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
-    }
+    res.status(200).json({ message: 'Message sent successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
 
 });
 
