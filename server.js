@@ -64,7 +64,6 @@ const io = socketIo(server, {
 //routes
 const authRoute = require("./routes/userRoutes");
 const chatRoute = require("./routes/chatRoutes");
-const chatModel = require("./models/chatModel");
 //route setup
 app.use("/api/users",authRoute);
 app.use("/api/users/chat",chatRoute);
@@ -82,7 +81,7 @@ io.on('connection', (socket) => {
         const { chatId, senderId, content } = messageData;
         
         // Save the message to the database
-        let chat = await Chat.findById(chatId);
+        const chat = await Chat.findById(chatId);
         const message = { sender: senderId, content, timestamp: new Date() };
         chat.messages.push(message);
         await chat.save();
