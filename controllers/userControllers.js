@@ -263,7 +263,7 @@ const updateUser = asyncHandler(async (req, res) => {
           if (!user) {
 
               res.status(400);
-              throw new Error('Contact not found');
+              throw new Error('User not found');
           }
           imagePath = user.image;
       }

@@ -36,16 +36,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static(path.resolve(__dirname, 'uploads')));
 
-//importing routes
-// const oAuthRouter = require("./oauth");
-// const requestRouter = require("./request");
-// Middleware to serve static files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
-///////////////////////////////////////////
-// app.use('/oauth', oAuthRouter);
-// app.use('/request', requestRouter);
 
 // error handling middleware
 app.use(errorHandler);
@@ -78,22 +69,25 @@ io.on('connection', (socket) => {
     });
 
     socket.on('sendMessage', async (messageData) => {
-        console.log("message datas", messageData);
-      
-        const { chatId, senderId, content, recipientId } = messageData;
-      
-        // Find the chat document and update it with the new message
-        const chat = await Chat.findOneAndUpdate(
-          { users: { $all: [recipientId, senderId] } },
-          { $push: { messages: { sender: senderId, content, timestamp: new Date() } } },
-          { upsert: true, new: true }
-        );
-      
-        console.log("chat collection", chat);
-      
-        // Emit the message to the chat room
-        io.to(chatId).emit('receiveMessage', { sender: senderId, content, timestamp: new Date() });
-      });
+        try {
+            const { chatId, senderId, content, recipientId } = messageData;
+
+            // Update or create the chat document
+            const chat = await Chat.findOneAndUpdate(
+                { users: { $all: [recipientId, senderId] } },
+                { $push: { messages: { sender: senderId, content, timestamp: new Date() } } },
+                { upsert: true, new: true }
+            );
+
+            // console.log("Updated chat:", chat);
+            // console.log("chat id is:", chatId);
+
+            // Emit the message to the chat room
+            io.to(chatId).emit('receiveMessage', { sender: senderId, content, timestamp: new Date() });
+        } catch (error) {
+            console.error("Error in sendMessage:", error);
+        }
+    });
 
     socket.on('disconnect', () => {
         console.log('User disconnected');

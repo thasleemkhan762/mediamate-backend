@@ -4,19 +4,47 @@ const fs = require('fs').promises;
 
 
 // get all posts
-const getAllPosts = async() => {
+const getAllPosts = async () => {
     const aggregationPipeline = [
-        { $sort: { createdAt: -1 } },
+      // Sort posts by creation date in descending order
+      { $sort: { createdAt: -1 } },
+  
+      // Lookup to join the 'Posts' collection with the 'Users' collection
+      {
+        $lookup: {
+          from: 'users', // The name of the User collection in MongoDB
+          localField: 'userId', // The field in the Posts collection that references the User
+          foreignField: '_id', // The field in the Users collection to match
+          as: 'userDetails' // The name of the field to add the joined data
+        }
+      },
+  
+      // Unwind the resulting array (since 'lookup' returns an array)
+      {
+        $unwind: '$userDetails'
+      },
+  
+      // Optionally project only the necessary fields
+      {
+        $project: {
+          file: 1,
+          fileType: 1,
+          description: 1,
+          createdAt: 1,
+          'userDetails.username': 1,
+          'userDetails.image': 1
+        }
+      }
     ];
+  
     try {
-        const posts = await Posts.aggregate(aggregationPipeline);
-        // console.log(posts);
-        
-        return posts;
+      const posts = await Posts.aggregate(aggregationPipeline);
+      return posts;
     } catch (error) {
-        throw error;
+      throw error;
     }
-}
+  };
+  
 
 //create post
 const createPost = async( userId, username, file, fileType, description ) => {
