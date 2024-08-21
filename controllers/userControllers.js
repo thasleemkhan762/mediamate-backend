@@ -225,7 +225,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const getAllUsers = asyncHandler((async (req,res) => {
   try {
-    const users = await User.find().select('userId username');
+    const users = await User.find().select('userId username image');
     res.status(200).json(users);
 } catch (err) {
     res.status(500).json({ message: 'Server error' });
