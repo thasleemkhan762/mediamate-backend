@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
+const Chat = require("../models/chatModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { transporter, sendOTP } = require("../config/emailConfig");
@@ -223,14 +224,39 @@ const loginUser = asyncHandler(async (req, res) => {
 //   res.json(data);
 // });
 
-const getAllUsers = asyncHandler((async (req,res) => {
+const getAllUsers = asyncHandler(async (req, res) => {
   try {
     const users = await User.find().select('userId username image');
-    res.status(200).json(users);
-} catch (err) {
+    
+    const userWithLastMessage = await Promise.all(
+      users.map(async (user) => {
+        const chat = await Chat.findOne({ users: user._id })
+          .sort({ 'messages.timestamp': -1 })
+          .select('messages')
+          .lean();
+
+        const lastMessage = chat?.messages?.length > 0 ? chat.messages[chat.messages.length - 1] : null;
+        
+        return {
+          userId: user._id,
+          username: user.username,
+          image: user.image,
+          lastMessage: lastMessage ? lastMessage.content : null,
+          lastMessageTimestamp: lastMessage ? lastMessage.timestamp : null,
+        };
+      })
+    );
+console.log(userWithLastMessage);
+console.log(users);
+
+    res.status(200).json(userWithLastMessage);
+  } catch (err) {
     res.status(500).json({ message: 'Server error' });
-}
-}))
+  }
+});
+
+module.exports = { getAllUsers };
+
 
 // get userdata
 const getUserData = asyncHandler(async (req, res) => {
