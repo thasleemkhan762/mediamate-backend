@@ -47,18 +47,28 @@ const getAllPosts = async () => {
   
 
 //create post
-const createPost = async( userId, username, file, fileType, description ) => {
-    try {
+const createPost = async (userId, username, file, fileType, description) => {
+  try {
+    // Create the new post
+    const newPost = await Posts.create({ userId, username, file, fileType, description });
 
-        const newPost = await Posts.create({ userId, username, file, fileType, description });
+    // Fetch the user's details (username and image)
+    const user = await User.findById(userId).select('username image');
 
-        return newPost;
+    // Add username and image to the new post object
+    const postWithUserDetails = {
+      ...newPost.toObject(),
+      userDetails: {
+        username: user.username,
+        image: user.image
+      }
+    };
 
-    } catch (error) {
-        
-        throw error;
+    return postWithUserDetails;
 
-    }
+  } catch (error) {
+    throw error;
+  }
 };
 
 // get user data
