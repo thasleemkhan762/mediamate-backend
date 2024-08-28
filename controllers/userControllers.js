@@ -326,6 +326,8 @@ const getAllPosts = asyncHandler(async(req, res) => {
 const getSingleUserPosts = asyncHandler (async(req, res) => {
   try {
     const singleUserPosts = await Userservices.getSingleUserPosts(req.params.id);
+    console.log("fgf",singleUserPosts);
+    
     res.status(200).json(singleUserPosts);
   } catch (error) {
     res.status(500).json({ message: error.message });

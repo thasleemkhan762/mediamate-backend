@@ -1,6 +1,7 @@
 const Posts = require("../models/postModel");
 const User = require("../models/userModel");
 const fs = require('fs').promises;
+const mongoose = require("mongoose")
 
 
 // get all posts
@@ -48,13 +49,57 @@ const getAllPosts = async () => {
 // get single user posts
 const getSingleUserPosts = async (id) => {
   try {
-    // Find all posts where the userId matches the provided id
-    const posts = await Posts.find({ userId: id });
+    const aggregationPipeline = [
+      // Correct the instantiation of ObjectId with 'new'
+      { $match: { userId: new mongoose.Types.ObjectId(id) } },
+
+      // Sort posts by creation date in descending order
+      { $sort: { createdAt: -1 } },
+
+      // Lookup to join the 'Posts' collection with the 'Users' collection
+      {
+        $lookup: {
+          from: 'users', // The name of the User collection in MongoDB
+          localField: 'userId', // The field in the Posts collection that references the User
+          foreignField: '_id', // The field in the Users collection to match
+          as: 'userDetails' // The name of the field to add the joined data
+        }
+      },
+
+      // Unwind the resulting array (since 'lookup' returns an array)
+      {
+        $unwind: '$userDetails'
+      },
+
+      // Optionally project only the necessary fields
+      {
+        $project: {
+          file: 1,
+          fileType: 1,
+          description: 1,
+          createdAt: 1,
+          'userDetails.username': 1,
+          'userDetails.image': 1
+        }
+      }
+    ];
+
+    const posts = await Posts.aggregate(aggregationPipeline);
+
+    if (posts.length === 0) {
+      console.log("No posts found for the given userId.");
+    }
+
     return posts;
   } catch (error) {
+    console.error("Error during aggregation:", error.message);
     throw new Error(error.message);
   }
 };
+
+
+
+
 
   
 
