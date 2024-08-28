@@ -322,6 +322,16 @@ const getAllPosts = asyncHandler(async(req, res) => {
   }
 })
 
+// get single user posts
+const getSingleUserPosts = asyncHandler (async(req, res) => {
+  try {
+    const singleUserPosts = await Userservices.getSingleUserPosts();
+    res.status(200).json({singleUserPosts});
+  } catch (error) {
+    
+  }
+})
+
 
 
 // create new contact
@@ -364,6 +374,7 @@ module.exports = {
   getUserData,
   getAllUsers,
   getAllPosts,
+  getSingleUserPosts,
   createPost,
   updateUser /*googleLogin, googleAuth, getUserData}*/,
 };
