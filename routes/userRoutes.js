@@ -8,7 +8,8 @@ const {
   getAllUsers,
   updateUser,
   createPost,
-  getAllPosts
+  getAllPosts,
+  getSingleUserPosts
 //   getUserData,
 //   googleLogin,
 //   googleAuth,
@@ -21,6 +22,7 @@ router.route("/otp_verify").post(verifyOTP);
 router.route("/allUsers").get(getAllUsers);
 
 router.route("/").get(getAllPosts);
+router.route("/getSingleUserPosts/:id").get(getSingleUserPosts);
 router.route("/").post(createPost);
 router.route("/:id").get(getUserData);
 router.route("/:id").put(updateUser);
