@@ -18,10 +18,6 @@ router.route("/register").post(userRegister);
 router.route("/login").post(loginUser);
 router.route("/otp_verify").post(verifyOTP);
 
-// router.post("/googleLogin", googleLogin);
-// router.post("/googleAuth", googleAuth);
-// router.get('/getUserData', getUserData);
-
 router.route("/allUsers").get(getAllUsers);
 
 router.route("/").get(getAllPosts);
