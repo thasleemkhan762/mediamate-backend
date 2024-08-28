@@ -44,6 +44,16 @@ const getAllPosts = async () => {
       throw error;
     }
   };
+
+  // get single user posts
+  const getSingleUserPosts = async(id) => {
+
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
   
 
 //create post
@@ -107,4 +117,4 @@ const updateUser = async (id, updateData, newImagePath) => {
     return editedUser;
 };
 
-module.exports = { createPost, getAllPosts, getUserData, updateUser };
+module.exports = { createPost, getAllPosts, getSingleUserPosts, getUserData, updateUser };
