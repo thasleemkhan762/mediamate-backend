@@ -45,15 +45,17 @@ const getAllPosts = async () => {
     }
   };
 
-  // get single user posts
-  const getSingleUserPosts = async(id) => {
-
-    try {
-      
-    } catch (error) {
-      
-    }
+// get single user posts
+const getSingleUserPosts = async (id) => {
+  try {
+    // Find all posts where the userId matches the provided id
+    const posts = await Posts.find({ userId: id });
+    return posts;
+  } catch (error) {
+    throw new Error(error.message);
   }
+};
+
   
 
 //create post
