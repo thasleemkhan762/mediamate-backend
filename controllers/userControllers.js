@@ -183,7 +183,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   res.cookie('userToken', Token, {httpOnly: false, maxAge: 60 * 60 * 1000 , withCredentials: true});
 
-  res.status(200).json({status: "success", data: user, username:user.username, userId:user._id, userToken: Token});
+  return res.status(200).json({status: "success", data: user, username:user.username, userId:user._id, userToken: Token});
 
 });
 
