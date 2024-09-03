@@ -310,7 +310,7 @@ const updateUser = asyncHandler(async (req, res) => {
 //get all posts
 const getAllPosts = asyncHandler(async(req, res) => {
   try {
-
+    await new Promise(resolve => setTimeout(resolve, 10000));
     const posts = await Userservices.getAllPosts();
     res.status(200).json({ posts });
 
@@ -326,7 +326,7 @@ const getAllPosts = asyncHandler(async(req, res) => {
 const getSingleUserPosts = asyncHandler (async(req, res) => {
   try {
     const singleUserPosts = await Userservices.getSingleUserPosts(req.params.id);
-    console.log("fgf",singleUserPosts);
+    // console.log("fgf",singleUserPosts);
     
     res.status(200).json(singleUserPosts);
   } catch (error) {
