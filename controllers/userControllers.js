@@ -310,7 +310,7 @@ const updateUser = asyncHandler(async (req, res) => {
 //get all posts
 const getAllPosts = asyncHandler(async(req, res) => {
   try {
-    await new Promise(resolve => setTimeout(resolve, 10000));
+    await new Promise(resolve => setTimeout(resolve, 4000));
     const posts = await Userservices.getAllPosts();
     res.status(200).json({ posts });
 
