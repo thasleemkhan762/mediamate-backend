@@ -31,7 +31,7 @@ const googleLogin = async (req, res) => {
             }
         );
         return res.status(200).json({
-            messsage: 'Success',
+            message: 'Success',
             token,
             user
         });
@@ -39,7 +39,7 @@ const googleLogin = async (req, res) => {
         console.log("the error is :",error);
         
         res.status(500).json({
-            messsage: 'Internal server error'
+            message: 'Internal server error'
         })
     }
 }
