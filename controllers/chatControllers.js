@@ -10,14 +10,17 @@ const getUserChats = asyncHandler(async (req, res) => {
     console.log(id2);
     try {
       // Find the chat with both users
-      const chat = await Chat.findOne({ users: { $all: [id1, id2] } });
+      let chat = await Chat.findOne({ users: { $all: [id1, id2] } });
       // .populate('messages.sender', 'username');
     //   console.log("Found chat:", chat);
       // console.log(chat);
 
       // Check if chat exists
       if (!chat) {
-        return res.status(404).json({ message: "Chat not found" });
+        chat = await Chat.create({
+          users: [id1, id2], // Initialize the users array with the two user IDs
+          messages: [] // Start with an empty messages array
+        });
       }
 
       // Log the chat messages for debugging
