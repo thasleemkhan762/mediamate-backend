@@ -36,7 +36,7 @@ function generateOTP() {
 const userRegister = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
-  if (!username || !email || !password) {
+  if ( !username || !email ) {
     res.status(400);
     throw new Error("All fields are mandatory!");
   }

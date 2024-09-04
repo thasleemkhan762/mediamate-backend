@@ -52,12 +52,18 @@ const io = socketIo(server, {
     },
 });
 
+app.get('/',(req, res) => {
+    res.send('Hello from auth server!');
+})
+
 //routes
-const authRoute = require("./routes/userRoutes");
+const userRoute = require("./routes/userRoutes");
 const chatRoute = require("./routes/chatRoutes");
+const authRoute = require("./routes/authRouter");
 //route setup
-app.use("/api/users",authRoute);
+app.use("/api/users",userRoute);
 app.use("/api/users/chat",chatRoute);
+app.use("/auth",authRoute);
 
 
 // Socket.io setup
