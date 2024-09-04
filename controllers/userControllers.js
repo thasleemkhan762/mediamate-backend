@@ -255,8 +255,6 @@ console.log(users);
   }
 });
 
-module.exports = { getAllUsers };
-
 
 // get userdata
 const getUserData = asyncHandler(async (req, res) => {
