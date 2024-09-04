@@ -226,11 +226,24 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const getAllUsers = asyncHandler(async (req, res) => {
   try {
-    const users = await User.find().select('userId username image');
-    
+    const currentUserId = req.params.id; // Assuming you have the current user ID in the request object
+
+    // Find all chats involving the current user
+    const chats = await Chat.find({ users: currentUserId }).select('users').lean();
+
+    // Extract unique user IDs of users who have chatted with the current user
+    const chattedUserIds = chats
+      .map(chat => chat.users.find(userId => userId.toString() !== currentUserId.toString()))
+      .filter(Boolean);
+
+    // Find all users who have chatted with the current user and exclude the current user
+    const users = await User.find({ _id: { $in: chattedUserIds } })
+      .select('userId username image')
+      .lean();
+
     const userWithLastMessage = await Promise.all(
       users.map(async (user) => {
-        const chat = await Chat.findOne({ users: user._id })
+        const chat = await Chat.findOne({ users: { $all: [user._id, currentUserId] } })
           .sort({ 'messages.timestamp': -1 })
           .select('messages')
           .lean();
@@ -247,13 +260,13 @@ const getAllUsers = asyncHandler(async (req, res) => {
       })
     );
 console.log(userWithLastMessage);
-console.log(users);
 
     res.status(200).json(userWithLastMessage);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 
 // get userdata

@@ -19,7 +19,7 @@ router.route("/register").post(userRegister);
 router.route("/login").post(loginUser);
 router.route("/otp_verify").post(verifyOTP);
 
-router.route("/allUsers").get(getAllUsers);
+router.route("/allUsers/:id").get(getAllUsers);
 
 router.route("/").get(getAllPosts);
 router.route("/getSingleUserPosts/:id").get(getSingleUserPosts);
