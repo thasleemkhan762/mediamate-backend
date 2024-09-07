@@ -6,6 +6,10 @@ const userSchema = mongoose.Schema(
       type: String,
       default: null,
     },
+    googleImage: {
+      type: String,
+      default: null,
+    },
     username: {
       type: String,
       required: [true, "Please add the username"],

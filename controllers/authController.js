@@ -17,6 +17,8 @@ const googleSignup = async (req, res) => {
         let user = await User.findOne({ email });
 
         if (user) {
+            console.log("Account already exists. Please log in instead");
+            
             return res.status(400).json({
                 message: 'Account already exists. Please log in instead.'
             });
@@ -25,7 +27,7 @@ const googleSignup = async (req, res) => {
         user = await User.create({
             username: name,
             email,
-            image: picture
+            googleImage: picture
         });
 
         const { _id } = user;
@@ -40,7 +42,7 @@ const googleSignup = async (req, res) => {
                 _id: user._id,
                 username: user.username,
                 email: user.email,
-                image: user.image
+                googleImage: user.googleImage
             }
         });
     } catch (error) {
@@ -82,7 +84,7 @@ const googleLogin = async (req, res) => {
                 _id: user._id,
                 username: user.username,
                 email: user.email,
-                image: user.image
+                googleImage: user.googleImage
             }
         });
     } catch (error) {
