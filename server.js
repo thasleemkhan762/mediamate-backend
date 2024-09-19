@@ -8,7 +8,8 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const http = require('http');
 const socketIo  = require("socket.io");
-const Chat = require("./models/chatModel")
+const Chat = require("./models/chatModel");
+const bodyParser = require('body-parser')
 
 connectDb();
 const app = express();
@@ -56,14 +57,19 @@ app.get('/',(req, res) => {
     res.send('Hello from auth server!');
 })
 
+// Middleware to parse the raw body for Stripe webhooks
+app.use('/api/users/payments/webhook', bodyParser.raw({ type: 'application/json' }));
+
 //routes
 const userRoute = require("./routes/userRoutes");
 const chatRoute = require("./routes/chatRoutes");
 const authRoute = require("./routes/authRouter");
+const paymentRoute = require("./routes/paymentRoutes");
 //route setup
 app.use("/api/users",userRoute);
 app.use("/api/users/chat",chatRoute);
 app.use("/auth",authRoute);
+app.use("/api/users/payments",paymentRoute);
 
 
 // Socket.io setup
