@@ -28,7 +28,10 @@ app.use(session({
     },
 }));
 
-app.use(cors({origin: "https://mediamate-frontend-nh6t.vercel.app/", credentials: true}));
+app.use(cors({
+    origin: ["https://mediamate-frontend.vercel.app", "https://mediamate-frontend-nh6t.vercel.app"],
+    credentials: true
+}));
 
 
 
@@ -48,8 +51,9 @@ const server = http.createServer(app);
 
 const io = socketIo(server, {
     cors: {
-      origin: "https://mediamate-frontend-nh6t.vercel.app/", // Replace with your React app's URL
-      methods: ["GET", "POST"],
+        origin: ["https://mediamate-frontend.vercel.app", "https://mediamate-frontend-nh6t.vercel.app"],
+        methods: ["GET", "POST"],
+        credentials: true
     },
 });
 
