@@ -9,7 +9,8 @@ const {
   updateUser,
   createPost,
   getAllPosts,
-  getSingleUserPosts
+  getSingleUserPosts,
+  getFriendSuggestions
 //   getUserData,
 //   googleLogin,
 //   googleAuth,
@@ -26,5 +27,6 @@ router.route("/getSingleUserPosts/:id").get(getSingleUserPosts);
 router.route("/").post(createPost);
 router.route("/:id").get(getUserData);
 router.route("/:id").put(updateUser);
+router.route("/suggestions/:id").get(getFriendSuggestions);
 
 module.exports = router;

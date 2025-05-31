@@ -379,6 +379,23 @@ const createPost = asyncHandler(async (req, res) => {
   })
 });
 
+const getFriendSuggestions = asyncHandler(async (req, res) => {
+  try {
+    const currentUserId = req.params.id;
+    console.log("currentUserId",currentUserId);
+    
+    // Find all users except current user
+    const users = await User.find({ 
+      _id: { $ne: currentUserId }
+    })
+    .select('username image')
+    .lean();
+
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 module.exports = {
   userRegister,
@@ -390,4 +407,5 @@ module.exports = {
   getSingleUserPosts,
   createPost,
   updateUser /*googleLogin, googleAuth, getUserData}*/,
+  getFriendSuggestions,
 };
