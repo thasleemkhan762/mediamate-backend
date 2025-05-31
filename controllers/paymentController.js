@@ -37,8 +37,8 @@ const subscriptionPlan = asyncHandler(async (req, res) => {
       },
     ],
     success_url:
-      "http://localhost:5001/api/users/payments/success?session_id={CHECKOUT_SESSION_ID}",
-    cancel_url: "http://localhost:5001/api/users/payments/cancel",
+      "https://mediamate-backend.onrender.com/api/users/payments/success?session_id={CHECKOUT_SESSION_ID}",
+    cancel_url: "https://mediamate-backend.onrender.com/api/users/payments/cancel",
   });
 
   return res.status(200).json(session);
