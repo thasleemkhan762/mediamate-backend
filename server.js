@@ -14,6 +14,23 @@ const bodyParser = require('body-parser')
 connectDb();
 const app = express();
 const port = process.env.PORT || 5000;
+const allowedOrigins = [
+    "https://mediamate-frontend.vercel.app",
+    "https://mediamate-frontend-nh6t.vercel.app"
+];
+const allowedOriginPatterns = [
+    /^https:\/\/mediamate-frontend-[a-z0-9-]+\.vercel\.app$/,
+    /^https:\/\/mediamate-frontend-nh6t-[a-z0-9-]+\.vercel\.app$/
+];
+
+const corsOrigin = (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin) || allowedOriginPatterns.some((pattern) => pattern.test(origin))) {
+        callback(null, true);
+        return;
+    }
+
+    callback(new Error(`Origin ${origin} is not allowed by CORS`));
+};
 
 app.use(session({
     secret: '123456789',
@@ -29,7 +46,7 @@ app.use(session({
 }));
 
 app.use(cors({
-    origin: ["https://mediamate-frontend.vercel.app", "https://mediamate-frontend-nh6t.vercel.app"],
+    origin: corsOrigin,
     credentials: true
 }));
 
@@ -56,7 +73,7 @@ const server = http.createServer(app);
 
 const io = socketIo(server, {
     cors: {
-        origin: ["https://mediamate-frontend.vercel.app", "https://mediamate-frontend-nh6t.vercel.app"],
+        origin: corsOrigin,
         methods: ["GET", "POST"],
         credentials: true
     },
