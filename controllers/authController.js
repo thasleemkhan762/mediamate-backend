@@ -3,10 +3,21 @@ const User = require("../models/userModel");
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
+const getGoogleTokens = async (code, redirectUri) => {
+    if (redirectUri) {
+        return oauth2client.getToken({
+            code,
+            redirect_uri: redirectUri
+        });
+    }
+
+    return oauth2client.getToken(code);
+}
+
 const googleSignup = async (req, res) => {
     try {
-        const { code } = req.query;
-        const googleRes = await oauth2client.getToken(code);
+        const { code, redirectUri } = req.query;
+        const googleRes = await getGoogleTokens(code, redirectUri);
         oauth2client.setCredentials(googleRes.tokens);
 
         const userRes = await axios.get(
@@ -56,8 +67,8 @@ const googleSignup = async (req, res) => {
 
 const googleLogin = async (req, res) => {
     try {
-        const { code } = req.query;
-        const googleRes = await oauth2client.getToken(code);
+        const { code, redirectUri } = req.query;
+        const googleRes = await getGoogleTokens(code, redirectUri);
         oauth2client.setCredentials(googleRes.tokens);
 
         const userRes = await axios.get(
